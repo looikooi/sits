@@ -1,0 +1,489 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}КанцПро — Канцелярский интернет-магазин{% endblock %}
+
+{% block content %}
+<body>
+
+  <!-- ════════════════════════════════════════════════
+       HEADER (идентичен index.html)
+  ════════════════════════════════════════════════ -->
+  <header class="header" id="header">
+    <div class="container header__inner">
+
+        <div class="logo__mark">К</div>
+        <div class="logo__text">
+          <span class="logo__name">КанцПро</span>
+          <span class="logo__tagline" data-i18n="logoTagline">Профессиональная канцелярия</span>
+        </div>
+      </a>
+
+      <nav class="nav" id="nav">
+        <a href="#hero"    class="nav__link" data-i18n="navHome">Главная</a>
+        <a href="#catalog" class="nav__link" data-i18n="navCatalog">Каталог</a>
+        <a href="#about"   class="nav__link" data-i18n="navAbout">О компании</a>
+        <a href="#contact" class="nav__link" data-i18n="navContact">Контакты</a>
+      </nav>
+
+      <div class="header__controls">
+        <div class="lang-switcher" role="group" aria-label="Выбор языка">
+          <button class="lang-btn active" data-lang="ru">РУ</button>
+          <button class="lang-btn"        data-lang="ky">КЫР</button>
+        </div>
+        <button class="cart-btn" id="cartBtn" aria-label="Открыть корзину">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+            <line x1="3" y1="6" x2="21" y2="6"/>
+            <path d="M16 10a4 4 0 01-8 0"/>
+          </svg>
+          <span class="cart-btn__count" id="cartCount">{{ cart_qty }}</span>
+        </button>
+        <button class="burger" id="burger" aria-label="Меню" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ════════════════════════════════════════════════
+       BREADCRUMB
+  ════════════════════════════════════════════════ -->
+  <div class="breadcrumb-bar">
+    <div class="container">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="#hero" " data-i18n="navHome">Главная</a>
+        <span class="breadcrumb__sep" aria-hidden="true">
+          <svg viewBox="0 0 16 16" fill="currentColor">
+            <path d="M6.22 3.22a.75.75 0 011.06 0l4.25 4.25a.75.75 0 010 1.06l-4.25 4.25a.75.75 0 01-1.06-1.06L9.94 8 6.22 4.28a.75.75 0 010-1.06z"/>
+          </svg>
+        </span>
+        <a href="#catalog" data-i18n="navCatalog">Каталог</a>
+        <span class="breadcrumb__sep" aria-hidden="true">
+          <svg viewBox="0 0 16 16" fill="currentColor">
+            <path d="M6.22 3.22a.75.75 0 011.06 0l4.25 4.25a.75.75 0 010 1.06l-4.25 4.25a.75.75 0 01-1.06-1.06L9.94 8 6.22 4.28a.75.75 0 010-1.06z"/>
+          </svg>
+        </span>
+        <a href="?category={{ product.category.slug }}">
+          <span data-lang-ru="{{ product.category.name_ru }}"
+                data-lang-ky="{{ product.category.name_ky }}">
+            {{ product.category.name_ru }}
+          </span>
+        </a>
+        <span class="breadcrumb__sep" aria-hidden="true">
+          <svg viewBox="0 0 16 16" fill="currentColor">
+            <path d="M6.22 3.22a.75.75 0 011.06 0l4.25 4.25a.75.75 0 010 1.06l-4.25 4.25a.75.75 0 01-1.06-1.06L9.94 8 6.22 4.28a.75.75 0 010-1.06z"/>
+          </svg>
+        </span>
+        <span class="breadcrumb__current"
+              data-lang-ru="{{ product.name_ru }}"
+              data-lang-ky="{{ product.name_ky }}">
+          {{ product.name_ru }}
+        </span>
+      </nav>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════
+       PRODUCT DETAIL — главный блок
+  ════════════════════════════════════════════════ -->
+  <main class="pd-main">
+    <div class="container pd-inner">
+
+      <!-- ── ЛЕВАЯ ЧАСТЬ: изображение ──────────────── -->
+      <div class="pd-gallery">
+        <div class="pd-gallery__main pd-gallery__main--{{ product.img_theme }}">
+
+          {% if product.badge %}
+            <span class="badge badge--{{ product.badge }}"
+                  data-i18n="badge{{ product.badge|capfirst }}">
+              {% if product.badge == "new" %}Новинка{% else %}Скидка{% endif %}
+            </span>
+          {% endif %}
+
+          {% if product.image %}
+            <img
+              src="{{ product.image.url }}"
+              alt="{{ product.name_ru }}"
+              class="pd-gallery__photo"
+            />
+          {% else %}
+            <div class="pd-gallery__emoji" aria-hidden="true">
+              {{ product.emoji }}
+            </div>
+          {% endif %}
+        </div>
+
+        <!-- Дополнительные миниатюры (для будущих фото) -->
+        {% if product.image %}
+        <div class="pd-gallery__thumbs">
+          <button class="pd-thumb pd-thumb--active">
+            <img src="{{ product.image.url }}" alt="{{ product.name_ru }}" />
+          </button>
+          {# Здесь добавишь product.extra_images.all в будущем #}
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- ── ПРАВАЯ ЧАСТЬ: информация ──────────────── -->
+      <div class="pd-info">
+
+        <!-- Категория + бейдж -->
+        <div class="pd-info__top">
+          <span class="pd-category"
+                data-lang-ru="{{ product.category.name_ru }}"
+                data-lang-ky="{{ product.category.name_ky }}">
+            {{ product.category.name_ru }}
+          </span>
+          {% if product.badge %}
+            <span class="badge badge--{{ product.badge }} badge--inline"
+                  data-i18n="badge{{ product.badge|capfirst }}">
+              {% if product.badge == "new" %}Новинка{% else %}Скидка{% endif %}
+            </span>
+          {% endif %}
+        </div>
+
+        <!-- Название -->
+        <h1 class="pd-title"
+            data-lang-ru="{{ product.name_ru }}"
+            data-lang-ky="{{ product.name_ky }}">
+          {{ product.name_ru }}
+        </h1>
+
+        <!-- Описание -->
+        <p class="pd-desc"
+           data-lang-ru="{{ product.desc_ru }}"
+           data-lang-ky="{{ product.desc_ky }}">
+          {{ product.desc_ru }}
+        </p>
+
+        <!-- Разделитель -->
+        <div class="pd-divider"></div>
+
+        <!-- Цена -->
+        <div class="pd-price-block">
+          <div class="pd-price">
+            <span class="pd-price__amount">{{ product.price_display }}</span>
+            <span class="pd-price__cur" data-i18n="currency">сом</span>
+          </div>
+          <p class="pd-price__note" data-i18n="priceNote">
+            Цена указана за 1 единицу товара · Доставка по Бишкеку
+          </p>
+        </div>
+
+        <!-- Количество + кнопка -->
+        <div class="pd-purchase">
+          <div class="pd-qty">
+            <button class="pd-qty__btn" id="qtyDec" aria-label="Уменьшить">−</button>
+            <span class="pd-qty__val" id="qtyVal">1</span>
+            <button class="pd-qty__btn" id="qtyInc" aria-label="Увеличить">+</button>
+          </div>
+          <button class="btn btn--primary pd-buy-btn" id="addToCartBtn"
+                  data-id="{{ product.pk }}"
+                  data-name-ru="{{ product.name_ru }}"
+                  data-name-ky="{{ product.name_ky }}"
+                  data-price="{{ product.price }}"
+                  data-emoji="{{ product.emoji }}">
+            <svg viewBox="0 0 20 20" fill="currentColor">
+              <path d="M6 2a1 1 0 00-.894.553L3.382 6H2a1 1 0 000 2h.28l.758 7.58A2 2 0 005.032 17.5h9.936a2 2 0 001.994-1.92L17.72 8H18a1 1 0 000-2h-1.382l-1.724-3.447A1 1 0 0014 2H6zm2.618 4L10 3.236 11.382 6H8.618zM6.764 6L7.618 4h-1.23L5 6h1.764zM13.236 6H15l-1.388-2.776-.376-.224h-1.23L13.236 6zM5.28 8h9.44l-.758 7.58a.2.2 0 01-.2.42H5.238a.2.2 0 01-.2-.42L5.28 8z"/>
+            </svg>
+            <span data-i18n="addToCart">В корзину</span>
+          </button>
+        </div>
+
+        <!-- Итог по выбранному количеству -->
+        <div class="pd-subtotal" id="pdSubtotal">
+          <span data-i18n="subtotalLabel">Итого:</span>
+          <strong id="pdSubtotalVal">{{ product.price_display }} сом</strong>
+        </div>
+
+        <!-- Разделитель -->
+        <div class="pd-divider"></div>
+
+        <!-- Преимущества -->
+        <ul class="pd-perks">
+          <li class="pd-perk">
+            <div class="pd-perk__icon pd-perk__icon--green">
+              <svg viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+              </svg>
+            </div>
+            <div>
+              <strong data-i18n="perk1Title">Гарантия качества</strong>
+              <span data-i18n="perk1Desc">Все товары сертифицированы</span>
+            </div>
+          </li>
+          <li class="pd-perk">
+            <div class="pd-perk__icon pd-perk__icon--blue">
+              <svg viewBox="0 0 20 20" fill="currentColor">
+                <path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z"/>
+                <path d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H11a1 1 0 001-1V5a1 1 0 00-1-1H3zM14 7h2l2 4v2h-1.05a2.5 2.5 0 00-4.9 0H14V7z"/>
+              </svg>
+            </div>
+            <div>
+              <strong data-i18n="perk2Title">Быстрая доставка</strong>
+              <span data-i18n="perk2Desc">По Бишкеку в день заказа</span>
+            </div>
+          </li>
+          <li class="pd-perk">
+            <div class="pd-perk__icon pd-perk__icon--amber">
+              <svg viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"/>
+              </svg>
+            </div>
+            <div>
+              <strong data-i18n="perk3Title">Возврат 14 дней</strong>
+              <span data-i18n="perk3Desc">Без лишних вопросов</span>
+            </div>
+          </li>
+        </ul>
+
+        <!-- Артикул -->
+        <p class="pd-sku">
+          <span data-i18n="skuLabel">Артикул:</span>
+          <code>KP-{{ product.pk|stringformat:"04d" }}</code>
+        </p>
+
+      </div>
+      <!-- /pd-info -->
+
+    </div>
+  </main>
+
+  <!-- ════════════════════════════════════════════════
+       RELATED PRODUCTS
+  ════════════════════════════════════════════════ -->
+  {% if related_products %}
+  <section class="related">
+    <div class="container">
+      <header class="section-head">
+        <p class="section-head__over" data-i18n="relatedOver">Из той же категории</p>
+        <h2 class="section-head__title" data-i18n="relatedTitle">Похожие товары</h2>
+      </header>
+
+      <div class="related-grid">
+        {% for rp in related_products %}
+        <article class="product-card"
+                 data-category="{{ rp.category.slug }}"
+                 data-id="{{ rp.pk }}"
+                 data-price="{{ rp.price }}">
+
+          <a href=":product_detail' rp.pk %}" class="product-card__link" aria-label="{{ rp.name_ru }}">
+            <div class="product-card__img product-card__img--{{ rp.img_theme }}">
+              {% if rp.badge %}
+                <span class="badge badge--{{ rp.badge }}">
+                  {% if rp.badge == "new" %}Новинка{% else %}Скидка{% endif %}
+                </span>
+              {% endif %}
+              {% if rp.image %}
+                <img src="{{ rp.image.url }}" alt="{{ rp.name_ru }}" class="product-card__photo" />
+              {% else %}
+                <div class="product-card__emoji">{{ rp.emoji }}</div>
+              {% endif %}
+            </div>
+          </a>
+
+          <div class="product-card__body">
+            <span class="product-card__cat"
+                  data-lang-ru="{{ rp.category.name_ru }}"
+                  data-lang-ky="{{ rp.category.name_ky }}">
+              {{ rp.category.name_ru }}
+            </span>
+            <h3 class="product-card__name">
+              <a href=":product_detail' rp.pk %}"
+                 data-lang-ru="{{ rp.name_ru }}"
+                 data-lang-ky="{{ rp.name_ky }}">
+                {{ rp.name_ru }}
+              </a>
+            </h3>
+            <p class="product-card__desc"
+               data-lang-ru="{{ rp.desc_ru }}"
+               data-lang-ky="{{ rp.desc_ky }}">
+              {{ rp.desc_ru }}
+            </p>
+            <div class="product-card__footer">
+              <p class="product-card__price">
+                <span class="product-card__amount">{{ rp.price_display }}</span>
+                <span class="product-card__cur" data-i18n="currency">сом</span>
+              </p>
+              <button class="btn-add"
+                      data-id="{{ rp.pk }}"
+                      data-name-ru="{{ rp.name_ru }}"
+                      data-name-ky="{{ rp.name_ky }}"
+                      data-price="{{ rp.price }}"
+                      data-emoji="{{ rp.emoji }}"
+                      aria-label="Добавить в корзину">
+                <svg viewBox="0 0 20 20" fill="currentColor">
+                  <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </article>
+        {% endfor %}
+      </div>
+
+    </div>
+  </section>
+  {% endif %}
+
+  <!-- ════════════════════════════════════════════════
+       FOOTER (идентичен index.html)
+  ════════════════════════════════════════════════ -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__top">
+        <div class="footer__brand">
+          <a href="" class="logo logo--light">
+            <div class="logo__mark">К</div>
+            <div class="logo__text">
+              <span class="logo__name">КанцПро</span>
+              <span class="logo__tagline" data-i18n="logoTagline">Профессиональная канцелярия</span>
+            </div>
+          </a>
+          <p class="footer__desc" data-i18n="footerDesc">
+            Поставщик канцелярских товаров в Кыргызстане с 2018 года.
+          </p>
+        </div>
+        <div class="footer__links">
+          <div class="footer__col">
+            <h5 data-i18n="footerColCatalog">Каталог</h5>
+            {% for cat in categories %}
+              <a href="?category={{ cat.slug }}"
+                 data-lang-ru="{{ cat.name_ru }}"
+                 data-lang-ky="{{ cat.name_ky }}">{{ cat.name_ru }}</a>
+            {% endfor %}
+          </div>
+          <div class="footer__col">
+            <h5 data-i18n="footerColCompany">Компания</h5>
+            <a href="#about"   data-i18n="navAbout">О нас</a>
+            <a href="#contact" data-i18n="navContact">Контакты</a>
+            <a href="#" data-i18n="footerPrivacy">Конфиденциальность</a>
+            <a href="#" data-i18n="footerOffer">Публичная оферта</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer__bottom">
+        <p class="footer__copy" data-i18n="footerCopy">© 2025 КанцПро. Все права защищены.</p>
+        <div class="footer__socials">
+          <a href="#" class="footer__social" aria-label="Instagram">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <rect x="2" y="2" width="20" height="20" rx="5"/>
+              <path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/>
+              <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+            </svg>
+          </a>
+          <a href="#" class="footer__social" aria-label="Telegram">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <line x1="22" y1="2" x2="11" y2="13"/>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+            </svg>
+          </a>
+          <a href="#" class="footer__social" aria-label="WhatsApp">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ════════════════════════════════════════════════
+       CART SIDEBAR
+  ════════════════════════════════════════════════ -->
+  <div class="cart-overlay" id="cartOverlay" aria-hidden="true"></div>
+  <aside class="cart-sidebar" id="cartSidebar" role="dialog" aria-label="Корзина" aria-modal="true">
+    <div class="cart-sidebar__head">
+      <h3 data-i18n="cartTitle">Корзина</h3>
+      <button class="cart-close" id="cartClose" aria-label="Закрыть">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+    <div class="cart-sidebar__body" id="cartItems">
+      <div class="cart-empty" id="cartEmpty">
+        <svg class="cart-empty__icon" viewBox="0 0 64 64" fill="none"
+             stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+          <path d="M24 46a4 4 0 100 8 4 4 0 000-8z"/>
+          <path d="M44 46a4 4 0 100 8 4 4 0 000-8z"/>
+          <path d="M6 6h6l5.68 28.39A4 4 0 0021.6 38H46a4 4 0 003.89-3.11L54 18H14"/>
+        </svg>
+        <p data-i18n="cartEmpty">Корзина пуста</p>
+        <a href="#catalog" class="btn btn--primary btn--sm"
+           data-i18n="cartGoShop" id="cartGoShop">Перейти в каталог</a>
+      </div>
+    </div>
+    <div class="cart-sidebar__foot" id="cartFoot" hidden>
+      <div class="cart-summary">
+        <div class="cart-summary__row">
+          <span data-i18n="cartItemsLabel">Позиций:</span>
+          <span id="cartItemCount">0</span>
+        </div>
+        <div class="cart-summary__row cart-summary__row--total">
+          <span data-i18n="cartTotal">Итого:</span>
+          <strong id="cartTotalVal">0 сом</strong>
+        </div>
+      </div>
+      <button class="btn btn--primary btn--full" id="checkoutBtn" data-i18n="cartCheckout">
+        Оформить заказ
+      </button>
+      <button class="btn btn--ghost btn--full btn--sm" id="clearCartBtn" data-i18n="cartClear">
+        Очистить корзину
+      </button>
+    </div>
+  </aside>
+
+  <!-- ════════════════════════════════════════════════
+       STICKY MOBILE BUY BAR (телефон)
+  ════════════════════════════════════════════════ -->
+  <div class="mobile-buy-bar" id="mobileBuyBar">
+    <div class="mobile-buy-bar__price">
+      <span class="mobile-buy-bar__amount">{{ product.price_display }}</span>
+      <span class="mobile-buy-bar__cur">сом</span>
+    </div>
+    <button class="btn btn--primary mobile-buy-bar__btn"
+            id="mobileBuyBtn"
+            data-id="{{ product.pk }}"
+            data-name-ru="{{ product.name_ru }}"
+            data-name-ky="{{ product.name_ky }}"
+            data-price="{{ product.price }}"
+            data-emoji="{{ product.emoji }}">
+      <svg viewBox="0 0 20 20" fill="currentColor">
+        <path d="M6 2a1 1 0 00-.894.553L3.382 6H2a1 1 0 000 2h.28l.758 7.58A2 2 0 005.032 17.5h9.936a2 2 0 001.994-1.92L17.72 8H18a1 1 0 000-2h-1.382l-1.724-3.447A1 1 0 0014 2H6zm2.618 4L10 3.236 11.382 6H8.618zM6.764 6L7.618 4h-1.23L5 6h1.764zM13.236 6H15l-1.388-2.776-.376-.224h-1.23L13.236 6zM5.28 8h9.44l-.758 7.58a.2.2 0 01-.2.42H5.238a.2.2 0 01-.2-.42L5.28 8z"/>
+      </svg>
+      <span data-i18n="addToCart">В корзину</span>
+    </button>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <!-- Данные товара для JS -->
+  <script>
+    window.PRODUCT_DATA = {
+      id:      {{ product.pk }},
+      nameRu:  "{{ product.name_ru|escapejs }}",
+      nameKy:  "{{ product.name_ky|escapejs }}",
+      price:   {{ product.price }},
+      emoji:   "{{ product.emoji }}",
+    };
+    window.CART_URLS = {
+      add:      "",
+      remove:   "",
+      update:   "",
+      clear:    "",
+      checkout: ",
+      detail:   "",
+    };
+    window.CSRF_TOKEN = "{{ csrf_token }}";
+  </script>
+
+  <script src="product_detail.js"></script>
+</body>
+</html>
+{% endblock %}

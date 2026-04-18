@@ -1,0 +1,29 @@
+{% load static %}
+<!doctype html>
+<html class="no-js" lang="zxx">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>{% block title %}Marten - Pet Food eCommerce{% endblock %}</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'img/favicon.png' %}">
+
+    <!-- Общие стили -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/product_detail.css' %}">
+
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="{% block body_class %}{% endblock %}">
+
+    {% block content %}{% endblock %}
+
+    <!-- Общие скрипты -->
+    <script src="{% static 'js/script.js' %}"></script>
+    <script src="{% static 'js/product_detail.js' %}"></script>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

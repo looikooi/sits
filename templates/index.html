@@ -1,0 +1,602 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<body
+  data-tr-ru='{
+    "siteTitle":        "КанцПро — Канцелярский интернет-магазин",
+    "logoTagline":      "Профессиональная канцелярия",
+    "navHome":          "Главная",
+    "navCatalog":       "Каталог",
+    "navAbout":         "О компании",
+    "navContact":       "Контакты",
+    "heroEyebrow":      "Бишкек · Официальный поставщик · С 2018 года",
+    "heroLine1":        "Всё для продуктивной",
+    "heroLine2":        "учёбы и работы",
+    "heroDesc":         "Широкий ассортимент канцелярских товаров по конкурентным ценам. Быстрая доставка по Бишкеку. Гарантия качества на каждый товар.",
+    "heroCta":          "Перейти в каталог",
+    "heroContact":      "Связаться с нами",
+    "kpiProducts":      "Наименований товаров",
+    "kpiOrders":        "Выполненных заказов",
+    "kpiYears":         "Опыта на рынке",
+    "kpiDelivery":      "Срок доставки",
+    "trust1":           "Сертифицированная продукция",
+    "trust2":           "Доставка в день заказа",
+    "trust3":           "Возврат в течение 14 дней",
+    "trust4":           "Поддержка 7 дней в неделю",
+    "catalogOver":      "Наш ассортимент",
+    "catalogTitle":     "Каталог товаров",
+    "catalogSub":       "Выберите категорию и найдите нужный товар",
+    "catAll":           "Все товары",
+    "catWriting":       "Письмо",
+    "catNotebooks":     "Тетради и блокноты",
+    "catBags":          "Рюкзаки и сумки",
+    "catArt":           "Творчество",
+    "catOffice":        "Офис",
+    "badgeNew":         "Новинка",
+    "badgeSale":        "Скидка",
+    "currency":         "сом",
+    "aboutOver":        "О компании",
+    "aboutTitle":       "Надёжный партнёр для бизнеса и образования",
+    "aboutP1":          "С 2018 года мы поставляем канцелярские товары школам, университетам, корпоративным клиентам и частным покупателям по всему Кыргызстану. Работаем только с сертифицированными производителями.",
+    "aboutP2":          "Каждый товар проходит контроль качества перед поступлением на склад. Гарантируем соответствие заявленным характеристикам и предоставляем полный сервис после продажи.",
+    "aboutKpi1":        "Год основания",
+    "aboutKpi2":        "Наименований",
+    "aboutKpi3":        "Постоянных клиентов",
+    "aboutKpi4":        "Склада в Бишкеке",
+    "aboutCta1":        "Перейти в каталог",
+    "aboutCta2":        "Оптовые заказы",
+    "contactOver":      "Контакты",
+    "contactTitle":     "Свяжитесь с нами",
+    "contactAddrLabel": "Адрес",
+    "contactAddrVal":   "г. Бишкек, ул. Чуй, 123",
+    "contactAddrNote":  "3 склада-магазина в Бишкеке",
+    "contactPhoneLabel":"Телефон",
+    "contactEmailLabel":"Электронная почта",
+    "contactHoursLabel":"Режим работы",
+    "contactHoursWeek": "Пн – Сб: 9:00 – 19:00",
+    "contactHoursSun":  "Вс: 10:00 – 16:00",
+    "footerDesc":       "Поставщик канцелярских товаров в Кыргызстане с 2018 года.",
+    "footerColCatalog": "Каталог",
+    "footerColCompany": "Компания",
+    "footerPrivacy":    "Конфиденциальность",
+    "footerOffer":      "Публичная оферта",
+    "footerCopy":       "© 2025 КанцПро. Все права защищены.",
+    "cartTitle":        "Корзина",
+    "cartEmpty":        "Корзина пуста",
+    "cartGoShop":       "Перейти в каталог",
+    "cartItemsLabel":   "Позиций:",
+    "cartTotal":        "Итого:",
+    "cartCheckout":     "Оформить заказ",
+    "cartClear":        "Очистить корзину",
+    "toastAdded":       "Добавлено: ",
+    "toastRemoved":     "Удалено: ",
+    "toastCleared":     "Корзина очищена",
+    "toastCheckout":    "Оформление заказа — скоро будет доступно"
+  }'
+  data-tr-ky='{
+    "siteTitle":        "КанцПро — Канцелярдык онлайн-магазин",
+    "logoTagline":      "Профессионалдык канцелярия",
+    "navHome":          "Башкы бет",
+    "navCatalog":       "Каталог",
+    "navAbout":         "Компания жөнүндө",
+    "navContact":       "Байланыш",
+    "heroEyebrow":      "Бишкек · Расмий жеткирүүчү · 2018-жылдан бери",
+    "heroLine1":        "Натыйжалуу окуу",
+    "heroLine2":        "жана иш үчүн",
+    "heroDesc":         "Кеңири ассортиментте канцелярдык товарлар жеткиликтүү баада. Бишкек боюнча тез жеткирүү. Ар бир товарга сапат кепилдиги.",
+    "heroCta":          "Каталогго өтүү",
+    "heroContact":      "Биз менен байланышуу",
+    "kpiProducts":      "Товар аталышы",
+    "kpiOrders":        "Аткарылган буйрутмалар",
+    "kpiYears":         "Рыноктогу тажрыйба",
+    "kpiDelivery":      "Жеткирүү мөөнөтү",
+    "trust1":           "Сертификатталган продукция",
+    "trust2":           "Буйрутма күнү жеткирүү",
+    "trust3":           "14 күн ичинде кайтаруу",
+    "trust4":           "Жумасына 7 күн колдоо",
+    "catalogOver":      "Биздин ассортимент",
+    "catalogTitle":     "Товарлар каталогу",
+    "catalogSub":       "Категорияны тандаңыз жана керектүү товарды табыңыз",
+    "catAll":           "Бардык товарлар",
+    "catWriting":       "Жазуу",
+    "catNotebooks":     "Дептерлер жана блокноттор",
+    "catBags":          "Рюкзактар жана сумкалар",
+    "catArt":           "Чыгармачылык",
+    "catOffice":        "Офис",
+    "badgeNew":         "Жаңы",
+    "badgeSale":        "Арзандатуу",
+    "currency":         "сом",
+    "aboutOver":        "Компания жөнүндө",
+    "aboutTitle":       "Бизнес жана билим берүү үчүн ишенимдүү өнөктөш",
+    "aboutP1":          "2018-жылдан бери биз Кыргызстан боюнча мектептерге, университеттерге, корпоративтик кардарларга жана жеке сатып алуучуларга канцелярдык товарларды жеткирип жатабыз.",
+    "aboutP2":          "Ар бир товар складка кириши алдында сапат контролунан өтөт. Заявленный мүнөздөмөлөргө дал келүүнү жана толук кызмат көрсөтүүнү кепилдейбиз.",
+    "aboutKpi1":        "Негизделген жылы",
+    "aboutKpi2":        "Аталыш",
+    "aboutKpi3":        "Туруктуу кардарлар",
+    "aboutKpi4":        "Бишкектеги склад",
+    "aboutCta1":        "Каталогго өтүү",
+    "aboutCta2":        "Оптовой буйрутмалар",
+    "contactOver":      "Байланыш",
+    "contactTitle":     "Биз менен байланышыңыз",
+    "contactAddrLabel": "Дарек",
+    "contactAddrVal":   "Бишкек ш., Чүй көч., 123",
+    "contactAddrNote":  "Бишкекте 3 склад-магазин",
+    "contactPhoneLabel":"Телефон",
+    "contactEmailLabel":"Электрондук почта",
+    "contactHoursLabel":"Иш убакыты",
+    "contactHoursWeek": "Дш – Иш: 9:00 – 19:00",
+    "contactHoursSun":  "Жш: 10:00 – 16:00",
+    "footerDesc":       "Кыргызстандагы канцелярдык товарлардын жеткирүүчүсү, 2018-жылдан бери.",
+    "footerColCatalog": "Каталог",
+    "footerColCompany": "Компания",
+    "footerPrivacy":    "Купуялык",
+    "footerOffer":      "Коомдук оферта",
+    "footerCopy":       "© 2025 КанцПро. Бардык укуктар корголгон.",
+    "cartTitle":        "Себет",
+    "cartEmpty":        "Себет бош",
+    "cartGoShop":       "Каталогго өтүү",
+    "cartItemsLabel":   "Позициялар:",
+    "cartTotal":        "Жыйынтык:",
+    "cartCheckout":     "Буйрутма берүү",
+    "cartClear":        "Себетти тазалоо",
+    "toastAdded":       "Кошулду: ",
+    "toastRemoved":     "Өчүрүлдү: ",
+    "toastCleared":     "Себет тазаланды",
+    "toastCheckout":    "Буйрутма берүү — жакында жеткиликтүү болот"
+  }'
+>
+
+  <!-- ════════════════════════════════════════════════
+       HEADER
+  ════════════════════════════════════════════════ -->
+  <header class="index-header header" id="header">
+    <div class="index-container container header__inner">
+
+      <a href="#" class="index-logo logo">
+        <div class="index-logo__mark logo__mark">К</div>
+        <div class="index-logo__text logo__text">
+          <span class="index-logo__name logo__name">КанцПро</span>
+          <span class="index-logo__tagline logo__tagline" data-i18n="logoTagline">Профессиональная канцелярия</span>
+        </div>
+      </a>
+
+      <nav class="index-nav nav" id="nav">
+        <a href="#hero"    class="index-nav__link nav__link" data-i18n="navHome">Главная</a>
+        <a href="#catalog" class="index-nav__link nav__link" data-i18n="navCatalog">Каталог</a>
+        <a href="#about"   class="index-nav__link nav__link" data-i18n="navAbout">О компании</a>
+        <a href="#contact" class="index-nav__link nav__link" data-i18n="navContact">Контакты</a>
+      </nav>
+
+      <div class="index-header__controls header__controls">
+        <div class="index-lang-switcher lang-switcher" role="group" aria-label="Выбор языка">
+          <button class="index-lang-btn lang-btn active" data-lang="ru">РУ</button>
+          <button class="index-lang-btn lang-btn"        data-lang="ky">КЫР</button>
+        </div>
+        <button class="index-cart-btn cart-btn" id="cartBtn" aria-label="Открыть корзину">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+               stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+            <line x1="3" y1="6" x2="21" y2="6"/>
+            <path d="M16 10a4 4 0 01-8 0"/>
+          </svg>
+          <span class="index-cart-btn__count cart-btn__count" id="cartCount">0</span>
+        </button>
+        <button class="index-burger burger" id="burger" aria-label="Меню" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ════════════════════════════════════════════════
+       HERO
+  ════════════════════════════════════════════════ -->
+  <section class="index-hero hero" id="hero">
+    <div class="index-container container hero__inner">
+
+      <div class="index-hero__left hero__left">
+        <p class="index-hero__eyebrow hero__eyebrow">
+          <span class="index-hero__dot hero__dot"></span>
+          <span data-i18n="heroEyebrow">Бишкек · Официальный поставщик · С 2018 года</span>
+        </p>
+        <h1 class="index-hero__title hero__title">
+          <span data-i18n="heroLine1">Всё для продуктивной</span>
+          <em data-i18n="heroLine2">учёбы и работы</em>
+        </h1>
+        <p class="index-hero__desc hero__desc" data-i18n="heroDesc">
+          Широкий ассортимент канцелярских товаров по конкурентным ценам.
+          Быстрая доставка по Бишкеку. Гарантия качества на каждый товар.
+        </p>
+        <div class="index-hero__cta hero__cta">
+          <a href="#catalog" class="index-btn btn btn--primary" data-i18n="heroCta">Перейти в каталог</a>
+          <a href="#contact" class="index-btn btn btn--outline"  data-i18n="heroContact">Связаться с нами</a>
+        </div>
+      </div>
+
+      <div class="index-hero__right hero__right">
+        <div class="index-hero__kpi-grid hero__kpi-grid">
+          <div class="index-hero__kpi hero__kpi">
+            <strong>500+</strong>
+            <span data-i18n="kpiProducts">Наименований товаров</span>
+          </div>
+          <div class="index-hero__kpi hero__kpi">
+            <strong>10 000+</strong>
+            <span data-i18n="kpiOrders">Выполненных заказов</span>
+          </div>
+          <div class="index-hero__kpi hero__kpi">
+            <strong>7 лет</strong>
+            <span data-i18n="kpiYears">Опыта на рынке</span>
+          </div>
+          <div class="index-hero__kpi hero__kpi">
+            <strong>1 день</strong>
+            <span data-i18n="kpiDelivery">Срок доставки</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="index-hero__bar hero__bar">
+      <div class="index-container container">
+        <div class="index-trust-strip trust-strip">
+          <div class="index-trust-item trust-item">
+            <svg viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+            <span data-i18n="trust1">Сертифицированная продукция</span>
+          </div>
+          <div class="index-trust-sep trust-sep"></div>
+          <div class="index-trust-item trust-item">
+            <svg viewBox="0 0 20 20" fill="currentColor">
+              <path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z"/>
+              <path d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H11a1 1 0 001-1V5a1 1 0 00-1-1H3zM14 7h2l2 4v2h-1.05a2.5 2.5 0 00-4.9 0H14V7z"/>
+            </svg>
+            <span data-i18n="trust2">Доставка в день заказа</span>
+          </div>
+          <div class="index-trust-sep trust-sep"></div>
+          <div class="index-trust-item trust-item">
+            <svg viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"/>
+            </svg>
+            <span data-i18n="trust3">Возврат в течение 14 дней</span>
+          </div>
+          <div class="index-trust-sep trust-sep"></div>
+          <div class="index-trust-item trust-item">
+            <svg viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/>
+            </svg>
+            <span data-i18n="trust4">Поддержка 7 дней в неделю</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════
+       CATALOG
+  ════════════════════════════════════════════════ -->
+  <section class="index-catalog catalog" id="catalog">
+    <div class="index-container container">
+
+      <header class="index-section-head section-head">
+        <p class="index-section-head__over section-head__over" data-i18n="catalogOver">Наш ассортимент</p>
+        <h2 class="index-section-head__title section-head__title" data-i18n="catalogTitle">Каталог товаров</h2>
+        <p class="index-section-head__sub section-head__sub"   data-i18n="catalogSub">Выберите категорию и найдите нужный товар</p>
+      </header>
+
+      <!-- ── FILTER BAR ────────────────────────────────── -->
+      <div class="index-filter-bar filter-bar" id="filterBar">
+        <button class="index-filter-btn filter-btn active" data-category="all">Все</button>
+
+        {% for c in categories %}
+          <button class="index-filter-btn filter-btn" data-category="{{ c.slug }}">
+            {{ c.name }}
+          </button>
+        {% endfor %}
+      </div>
+
+      <!-- ── PRODUCTS GRID ──────────────────────────────── -->
+      <div class="index-products-grid products-grid" id="productsGrid">
+        {% for p in products %}
+
+        <a href="{% url 'product_detail' pk=p.pk %}" class="index-product-link product-link">
+
+          <article class="index-product-card product-card"
+                   data-category="{{ p.category.slug }}"
+                   data-id="{{ p.pk }}"
+                   data-price="{{ p.price }}">
+
+            <div class="index-product-card__img product-card__img product-card__img--blue">
+
+              {% if p.badge == 'new' %}
+                <span class="index-badge badge badge--new">Новинка</span>
+              {% elif p.badge == 'sale' %}
+                <span class="index-badge badge badge--sale">Скидка</span>
+              {% endif %}
+
+              <span class="index-product-card__emoji product-card__emoji">{{ p.emoji }}</span>
+            </div>
+
+            <div class="index-product-card__body product-card__body">
+
+              <span class="index-product-card__cat product-card__cat">
+                {{ p.get_category_display }}
+              </span>
+
+              <h3 class="index-product-card__name product-card__name"
+                  data-lang-ru="{{ p.name_ru }}"
+                  data-lang-ky="{{ p.name_ky }}">
+                {{ p.name_ru }}
+              </h3>
+
+              <p class="index-product-card__desc product-card__desc"
+                 data-lang-ru="{{ p.desc_ru }}"
+                 data-lang-ky="{{ p.desc_ky }}">
+                {{ p.desc_ru }}
+              </p>
+
+              <div class="index-product-card__footer product-card__footer">
+
+                <p class="index-product-card__price product-card__price">
+                  <span class="index-product-card__amount product-card__amount">{{ p.price }}</span>
+                  <span class="index-product-card__cur product-card__cur">сом</span>
+                </p>
+
+                <button class="index-btn-add btn-add"
+                        data-id="{{ p.pk }}"
+                        data-name-ru="{{ p.name_ru }}"
+                        data-name-ky="{{ p.name_ky }}"
+                        data-price="{{ p.price }}"
+                        data-emoji="{{ p.emoji }}"
+                        onclick="event.preventDefault();">
+                  +
+                </button>
+
+              </div>
+            </div>
+
+          </article>
+        </a>
+
+        {% endfor %}
+      </div><!-- /products-grid -->
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════
+       ABOUT
+  ════════════════════════════════════════════════ -->
+  <section class="index-about about" id="about">
+    <div class="index-container container about__inner">
+
+      <div class="index-about__kpi about__kpi">
+        <div class="index-about__kpi-card about__kpi-card">
+          <strong>2018</strong>
+          <span data-i18n="aboutKpi1">Год основания</span>
+        </div>
+        <div class="index-about__kpi-card about__kpi-card">
+          <strong>500+</strong>
+          <span data-i18n="aboutKpi2">Наименований</span>
+        </div>
+        <div class="index-about__kpi-card about__kpi-card">
+          <strong>10 000+</strong>
+          <span data-i18n="aboutKpi3">Постоянных клиентов</span>
+        </div>
+        <div class="index-about__kpi-card about__kpi-card">
+          <strong>3</strong>
+          <span data-i18n="aboutKpi4">Склада в Бишкеке</span>
+        </div>
+      </div>
+
+      <div class="index-about__content about__content">
+        <p class="index-section-head__over section-head__over" data-i18n="aboutOver">О компании</p>
+        <h2 class="index-section-head__title section-head__title" data-i18n="aboutTitle">
+          Надёжный партнёр для бизнеса и образования
+        </h2>
+        <p class="index-about__para about__para" data-i18n="aboutP1">
+          С 2018 года мы поставляем канцелярские товары школам, университетам, корпоративным клиентам и частным покупателям по всему Кыргызстану. Работаем только с сертифицированными производителями.
+        </p>
+        <p class="index-about__para about__para" data-i18n="aboutP2">
+          Каждый товар проходит контроль качества перед поступлением на склад. Гарантируем соответствие заявленным характеристикам и предоставляем полный сервис после продажи.
+        </p>
+        <div class="index-about__actions about__actions">
+          <a href="#catalog" class="index-btn btn btn--primary" data-i18n="aboutCta1">Перейти в каталог</a>
+          <a href="#contact" class="index-btn btn btn--outline"  data-i18n="aboutCta2">Оптовые заказы</a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════
+       CONTACT
+  ════════════════════════════════════════════════ -->
+  <section class="index-contact contact" id="contact">
+    <div class="index-container container">
+
+      <header class="index-section-head section-head">
+        <p class="index-section-head__over section-head__over" data-i18n="contactOver">Контакты</p>
+        <h2 class="index-section-head__title section-head__title" data-i18n="contactTitle">Свяжитесь с нами</h2>
+      </header>
+
+      <div class="index-contact__grid contact__grid">
+
+        <div class="index-contact-card contact-card">
+          <div class="index-contact-card__icon contact-card__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+              <path d="M17.657 16.657L13.414 20.9a2 2 0 01-2.828 0l-4.243-4.243a8 8 0 1111.314 0z"/>
+              <circle cx="12" cy="11" r="3"/>
+            </svg>
+          </div>
+          <h4 data-i18n="contactAddrLabel">Адрес</h4>
+          <p data-i18n="contactAddrVal">г. Бишкек, ул. Чуй, 123</p>
+          <p class="index-contact-card__note contact-card__note" data-i18n="contactAddrNote">3 склада-магазина в Бишкеке</p>
+        </div>
+
+        <div class="index-contact-card contact-card">
+          <div class="index-contact-card__icon contact-card__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+              <path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+            </svg>
+          </div>
+          <h4 data-i18n="contactPhoneLabel">Телефон</h4>
+          <p><a href="tel:+996700123456">+996 700 123 456</a></p>
+          <p><a href="tel:+996312123456">+996 312 12-34-56</a></p>
+        </div>
+
+        <div class="index-contact-card contact-card">
+          <div class="index-contact-card__icon contact-card__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+              <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+            </svg>
+          </div>
+          <h4 data-i18n="contactEmailLabel">Электронная почта</h4>
+          <p><a href="mailto:info@kancpro.kg">info@kancpro.kg</a></p>
+          <p><a href="mailto:opt@kancpro.kg">opt@kancpro.kg</a></p>
+        </div>
+
+        <div class="index-contact-card contact-card">
+          <div class="index-contact-card__icon contact-card__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 16 14"/>
+            </svg>
+          </div>
+          <h4 data-i18n="contactHoursLabel">Режим работы</h4>
+          <p data-i18n="contactHoursWeek">Пн – Сб: 9:00 – 19:00</p>
+          <p data-i18n="contactHoursSun">Вс: 10:00 – 16:00</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════
+       FOOTER
+  ════════════════════════════════════════════════ -->
+  <footer class="index-footer footer">
+    <div class="index-container container">
+
+      <div class="index-footer__top footer__top">
+        <div class="index-footer__brand footer__brand">
+          <a href="#" class="index-logo logo logo--light">
+            <div class="index-logo__mark logo__mark">К</div>
+            <div class="index-logo__text logo__text">
+              <span class="index-logo__name logo__name">КанцПро</span>
+              <span class="index-logo__tagline logo__tagline" data-i18n="logoTagline">Профессиональная канцелярия</span>
+            </div>
+          </a>
+          <p class="index-footer__desc footer__desc" data-i18n="footerDesc">
+            Поставщик канцелярских товаров в Кыргызстане с 2018 года.
+          </p>
+        </div>
+
+        <div class="index-footer__links footer__links">
+          <div class="index-footer__col footer__col">
+            <h5 data-i18n="footerColCatalog">Каталог</h5>
+            <a href="#catalog" data-i18n="catWriting">Письмо</a>
+            <a href="#catalog" data-i18n="catNotebooks">Тетради</a>
+            <a href="#catalog" data-i18n="catBags">Рюкзаки</a>
+            <a href="#catalog" data-i18n="catArt">Творчество</a>
+            <a href="#catalog" data-i18n="catOffice">Офис</a>
+          </div>
+          <div class="index-footer__col footer__col">
+            <h5 data-i18n="footerColCompany">Компания</h5>
+            <a href="#about"   data-i18n="navAbout">О нас</a>
+            <a href="#contact" data-i18n="navContact">Контакты</a>
+            <a href="#"        data-i18n="footerPrivacy">Конфиденциальность</a>
+            <a href="#"        data-i18n="footerOffer">Публичная оферта</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="index-footer__bottom footer__bottom">
+        <p class="index-footer__copy footer__copy" data-i18n="footerCopy">© 2025 КанцПро. Все права защищены.</p>
+        <div class="index-footer__socials footer__socials">
+          <a href="#" class="index-footer__social footer__social" aria-label="Instagram">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <rect x="2" y="2" width="20" height="20" rx="5"/>
+              <path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/>
+              <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+            </svg>
+          </a>
+          <a href="#" class="index-footer__social footer__social" aria-label="Telegram">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <line x1="22" y1="2" x2="11" y2="13"/>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+            </svg>
+          </a>
+          <a href="#" class="index-footer__social footer__social" aria-label="WhatsApp">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- ════════════════════════════════════════════════
+       CART SIDEBAR
+  ════════════════════════════════════════════════ -->
+  <div class="index-cart-overlay cart-overlay" id="cartOverlay" aria-hidden="true"></div>
+
+  <aside class="index-cart-sidebar cart-sidebar" id="cartSidebar" role="dialog" aria-label="Корзина" aria-modal="true">
+    <div class="index-cart-sidebar__head cart-sidebar__head">
+      <h3 data-i18n="cartTitle">Корзина</h3>
+      <button class="index-cart-close cart-close" id="cartClose" aria-label="Закрыть корзину">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="index-cart-sidebar__body cart-sidebar__body" id="cartItems">
+      <!-- Пустая корзина -->
+      <div class="index-cart-empty cart-empty" id="cartEmpty">
+        <svg class="index-cart-empty__icon cart-empty__icon" viewBox="0 0 64 64" fill="none"
+             stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+          <path d="M24 46a4 4 0 100 8 4 4 0 000-8z"/>
+          <path d="M44 46a4 4 0 100 8 4 4 0 000-8z"/>
+          <path d="M6 6h6l5.68 28.39A4 4 0 0021.6 38H46a4 4 0 003.89-3.11L54 18H14"/>
+        </svg>
+        <p data-i18n="cartEmpty">Корзина пуста</p>
+        <a href="#catalog" class="index-btn btn btn--primary btn--sm" id="cartGoShop" data-i18n="cartGoShop">
+          Перейти в каталог
+        </a>
+      </div>
+      <!-- Товары добавляются сюда через JS -->
+    </div>
+
+    <div class="index-cart-sidebar__foot cart-sidebar__foot" id="cartFoot" hidden>
+      <div class="index-cart-summary cart-summary">
+        <div class="index-cart-summary__row cart-summary__row">
+          <span data-i18n="cartItemsLabel">Позиций:</span>
+          <span id="cartItemCount">0</span>
+        </div>
+        <div class="index-cart-summary__row cart-summary__row cart-summary__row--total">
+          <span data-i18n="cartTotal">Итого:</span>
+          <strong id="cartTotalVal">0 сом</strong>
+        </div>
+      </div>
+      <button class="index-btn btn btn--primary btn--full" id="checkoutBtn" data-i18n="cartCheckout">
+        Оформить заказ
+      </button>
+      <button class="index-btn btn btn--ghost btn--full btn--sm" id="clearCartBtn" data-i18n="cartClear">
+        Очистить корзину
+      </button>
+    </div>
+  </aside>
+
+  <!-- ════════════════════════════════════════════════
+       TOAST
+  ════════════════════════════════════════════════ -->
+  <div class="index-toast toast" id="toast" role="status" aria-live="polite"></div>
+
+</body>
+</html>
+{% endblock %}
