@@ -18,7 +18,7 @@ const CONFIG = {
   defaultLang: 'ru',
   toastMs:     2600,
 };
-
+const CART_KEY = 'kancpro_cart';
 /* ================================================================
    TRANSLATIONS — loaded from data-tr-* on <body>
    (Keys marked (* product-level) are handled via data-lang-* in HTML)
@@ -56,7 +56,20 @@ function t(key, prefix) {
 function formatPrice(amount) {
   return `${Number(amount).toLocaleString('ru-RU')} ${CONFIG.currency}`;
 }
+function saveCart() {
+  localStorage.setItem(CART_KEY, JSON.stringify(State.cart));
+}
 
+function loadCart() {
+  try {
+    const data = JSON.parse(localStorage.getItem(CART_KEY));
+    if (Array.isArray(data)) {
+      State.cart = data;
+    }
+  } catch (e) {
+    State.cart = [];
+  }
+}
 /* ================================================================
    LANG MODULE
    ================================================================ */
@@ -174,6 +187,7 @@ const Cart = {
       });
     }
     this.renderItems();
+    saveCart();
   },
 
   renderItems() {
@@ -430,10 +444,17 @@ function bindEvents() {
    INIT
    ================================================================ */
 document.addEventListener('DOMContentLoaded', () => {
+
+  loadCart(); // 1. Сначала загрузили корзину
+
+  Cart.renderItems(); // 2. СРАЗУ отрисовали (важно!)
+
   Lang.set(CONFIG.defaultLang);
   Header.init();
   Burger.init();
   Reveal.init();
-  Cart._sync();
+
+  Cart._sync(); // 3. обновили счетчик и сохранили
+
   bindEvents();
 });
