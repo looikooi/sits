@@ -1,21 +1,35 @@
 import os
 from pathlib import Path
+from dotenv import load_dotenv
+import cloudinary
+
+# 🔥 загружаем .env
+load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# 🔐 СЕКРЕТЫ
+SECRET_KEY = os.getenv("SECRET_KEY")
 
-SECRET_KEY = os.environ.get("SECRET_KEY", "unsafe-secret-key")
-
-DEBUG = False
+DEBUG = os.getenv("DEBUG") == "True"
 
 ALLOWED_HOSTS = [
     ".onrender.com",
 ]
 
-
 CSRF_TRUSTED_ORIGINS = [
     "https://*.onrender.com",
 ]
+
+# ☁️ Cloudinary
+cloudinary.config(
+    cloud_name = os.getenv('CLOUD_NAME'),
+    api_key = os.getenv('API_KEY'),
+    api_secret = os.getenv('API_SECRET')
+)
+
+# 🔥 ХРАНЕНИЕ ФАЙЛОВ
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 
 INSTALLED_APPS = [
@@ -26,6 +40,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'store',
+    'cloudinary',
+    'cloudinary_storage',
+
 ]
 
 
@@ -95,7 +112,7 @@ STATICFILES_DIRS = [
 # WhiteNoise (правильная настройка)
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 # MEDIA
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / "media"

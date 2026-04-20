@@ -27,7 +27,9 @@ class Product(models.Model):
     desc_ru = models.TextField()
     desc_ky = models.TextField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    emoji = models.CharField(max_length=10, blank=True)
+
+    # 🔥 ВОТ ЗАМЕНА
+    image = models.ImageField(upload_to='products/', blank=True, null=True)
 
     badge = models.CharField(
         max_length=4,
@@ -44,7 +46,6 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name_ru
-
 
 # ===== ORDER =====
 class Order(models.Model):
