@@ -29,7 +29,6 @@ cloudinary.config(
 )
 
 # 🔥 ХРАНЕНИЕ ФАЙЛОВ
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 
 INSTALLED_APPS = [
@@ -108,11 +107,13 @@ STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
 
-
+STORAGES = {
+    "default": {
+        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 # WhiteNoise (правильная настройка)
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-# MEDIA
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / "media"
