@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 import cloudinary
-import cloudinary_storage.storage
+import dj_database_url
 
 load_dotenv()
 
@@ -27,9 +27,9 @@ CSRF_TRUSTED_ORIGINS = [
 # CLOUDINARY
 # ======================
 cloudinary.config(
-    cloud_name=os.getenv("cloud_name"),
-    api_key=os.getenv("api_key"),
-    api_secret=os.getenv("api_secret"),
+    cloud_name=os.getenv("CLOUD_NAME"),
+    api_key=os.getenv("API_KEY"),
+    api_secret=os.getenv("API_SECRET"),
 )
 
 # ======================
@@ -85,13 +85,13 @@ TEMPLATES = [
 WSGI_APPLICATION = 'kancpro.wsgi.application'
 
 # ======================
-# DATABASE (SQLite)
+# DATABASE (ВАЖНО ДЛЯ RENDER)
 # ======================
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.config(
+        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
+        conn_max_age=600
+    )
 }
 
 # ======================
@@ -115,6 +115,6 @@ STATICFILES_DIRS = [
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # ======================
-# MEDIA (Cloudinary)
+# MEDIA (CLOUDINARY)
 # ======================
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
