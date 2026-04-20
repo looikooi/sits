@@ -4,13 +4,12 @@ from dotenv import load_dotenv
 import cloudinary
 import cloudinary_storage.storage
 import whitenoise.storage
+import dj_database_url
 
-# 🔥 загружаем .env
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# 🔐 СЕКРЕТЫ
 SECRET_KEY = os.getenv("SECRET_KEY")
 
 DEBUG = os.getenv("DEBUG", "False") == "True"
@@ -23,15 +22,12 @@ CSRF_TRUSTED_ORIGINS = [
     "https://*.onrender.com",
 ]
 
-# ☁️ Cloudinary
+# Cloudinary
 cloudinary.config(
-    cloud_name = os.getenv('CLOUD_NAME'),
-    api_key = os.getenv('API_KEY'),
-    api_secret = os.getenv('API_SECRET')
+    cloud_name=os.getenv('CLOUD_NAME'),
+    api_key=os.getenv('API_KEY'),
+    api_secret=os.getenv('API_SECRET')
 )
-
-# 🔥 ХРАНЕНИЕ ФАЙЛОВ
-
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -43,13 +39,11 @@ INSTALLED_APPS = [
     'store',
     'cloudinary',
     'cloudinary_storage',
-
 ]
-
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # ВАЖНО: сразу после security
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -57,7 +51,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
 
 ROOT_URLCONF = 'kancpro.urls'
 
@@ -77,34 +70,24 @@ TEMPLATES = [
     },
 ]
 
-
 WSGI_APPLICATION = 'kancpro.wsgi.application'
 
-
+# 💥 ВОТ ГЛАВНЫЙ ФИКС (DATABASE)
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.config(
+        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
+        conn_max_age=600
+    )
 }
-
 
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 
-
-# =======================
-# STATIC FILES (ВАЖНО)
-# =======================
-
 STATIC_URL = '/static/'
-
-# куда collectstatic складывает файлы (Render использует это)
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
-# твоя локальная папка static (ОЧЕНЬ ВАЖНО)
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
@@ -117,5 +100,3 @@ STORAGES = {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
 }
-# WhiteNoise (правильная настройка)
-
