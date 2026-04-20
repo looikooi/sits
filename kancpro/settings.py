@@ -3,14 +3,12 @@ from pathlib import Path
 from dotenv import load_dotenv
 import cloudinary
 import cloudinary_storage.storage
-import whitenoise.storage
-import dj_database_url
 
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = os.getenv("SECRET_KEY")
+SECRET_KEY = os.getenv("SECRET_KEY", "unsafe-secret-key")
 
 DEBUG = os.getenv("DEBUG", "False") == "True"
 
@@ -22,7 +20,7 @@ CSRF_TRUSTED_ORIGINS = [
     "https://*.onrender.com",
 ]
 
-# Cloudinary
+# ☁️ Cloudinary
 cloudinary.config(
     cloud_name=os.getenv('CLOUD_NAME'),
     api_key=os.getenv('API_KEY'),
@@ -72,13 +70,14 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'kancpro.wsgi.application'
 
-# 🚀 DATABASE (ПРАВИЛЬНЫЙ ВАРИАНТ ДЛЯ RENDER)
+# 💥 DATABASE = ТОЛЬКО SQLite (без dj_database_url)
 DATABASES = {
-    'default': dj_database_url.config(
-        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
-        conn_max_age=600
-    )
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
 }
+
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
@@ -91,7 +90,6 @@ STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
 
-# STORAGE (правильный новый стиль Django 4+)
 STORAGES = {
     "default": {
         "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
