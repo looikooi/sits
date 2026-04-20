@@ -72,10 +72,10 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'kancpro.wsgi.application'
 
-# 💥 ВОТ ГЛАВНЫЙ ФИКС (DATABASE)
+# 🚀 DATABASE (ПРАВИЛЬНЫЙ ВАРИАНТ ДЛЯ RENDER)
 DATABASES = {
     'default': dj_database_url.config(
-        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
+        default=os.getenv("DATABASE_URL", f"sqlite:///{BASE_DIR / 'db.sqlite3'}"),
         conn_max_age=600
     )
 }
@@ -92,6 +92,7 @@ STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
 
+# STORAGE (правильный новый стиль Django 4+)
 STORAGES = {
     "default": {
         "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
