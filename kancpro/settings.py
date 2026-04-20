@@ -75,11 +75,10 @@ WSGI_APPLICATION = 'kancpro.wsgi.application'
 # 🚀 DATABASE (ПРАВИЛЬНЫЙ ВАРИАНТ ДЛЯ RENDER)
 DATABASES = {
     'default': dj_database_url.config(
-        default=os.getenv("DATABASE_URL", f"sqlite:///{BASE_DIR / 'db.sqlite3'}"),
+        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
         conn_max_age=600
     )
 }
-
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
