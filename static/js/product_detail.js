@@ -1,294 +1,330 @@
-from decimal import Decimal
+/**
+ * КанцПро — product_detail.js  |  v3.0 2025
+ * ─────────────────────────────────────────────────────────────────
+ * Страница детали товара. Переиспользует логику корзины из script.js
+ * ЧЕРЕЗ тот же localStorage-ключ — корзина общая с главной страницей.
+ *
+ * Зависимости: script.js (уже подключён в base.html)
+ * Данные товара: window.PRODUCT_DATA (из Django-шаблона)
+ *
+ * Модули:
+ *  QtyControl   — счётчик количества + subtotal
+ *  AddToCart    — кнопки «В корзину» (основная + мобильная)
+ *  MobileBuyBar — появление sticky-бара при скролле
+ *  RelatedCards — кнопки «+» в похожих товарах
+ *  Thumb        — переключение миниатюр галереи
+ *  LangSync     — синхронизация языка с data-lang-* на этой странице
+ * ─────────────────────────────────────────────────────────────────
+ */
 
-from django.http            import JsonResponse
-from django.shortcuts       import render, get_object_or_404
-from django.views           import View
-from django.views.generic   import ListView, DetailView
-from django.utils.decorators import method_decorator
-from django.views.decorators.http import require_POST
+'use strict';
 
-from .models import Product, Category, CartSession
+/* ================================================================
+   ЖДЁМ script.js — он инициализирует Cart, Lang, Toast и т.д.
+   Если script.js подключён в base.html до этого файла,
+   DOMContentLoaded уже сработал, поэтому используем defer-паттерн.
+   ================================================================ */
+(function () {
 
+  /* ── HELPERS ──────────────────────────────────────────────── */
+  const $  = id  => document.getElementById(id);
+  const $$ = sel => [...document.querySelectorAll(sel)];
 
-# ─────────────────────────────────────────────────────────────────
-# CONSTANTS
-# ─────────────────────────────────────────────────────────────────
-CURRENCY = "сом"
+  /* ── PRODUCT DATA из Django ───────────────────────────────── */
+  const PD = window.PRODUCT_DATA || {};
 
+  /* ── QTY STATE ────────────────────────────────────────────── */
+  let qty = 1;
+  const MIN_QTY = 1;
+  const MAX_QTY = 99;
 
-# ─────────────────────────────────────────────────────────────────
-# HELPERS — работа с корзиной через сессию
-# ─────────────────────────────────────────────────────────────────
+  /* ================================================================
+     QtyControl — счётчик количества
+     ================================================================ */
+  const QtyControl = {
+    el:       null,
+    decBtn:   null,
+    incBtn:   null,
+    subtotal: null,
 
-def _get_cart(request) -> dict:
-    """
-    Возвращает корзину из сессии.
-    Формат: { "product_id": {"qty": int, "price": str, ...}, ... }
-    """
-    return request.session.get("cart", {})
+    init() {
+      this.el       = $('qtyVal');
+      this.decBtn   = $('qtyDec');
+      this.incBtn   = $('qtyInc');
+      this.subtotal = $('pdSubtotalVal');
+      if (!this.el) return;
 
+      this.decBtn?.addEventListener('click', () => this.change(-1));
+      this.incBtn?.addEventListener('click', () => this.change(+1));
+      this.render();
+    },
 
-def _save_cart(request, cart: dict):
-    request.session["cart"] = cart
-    request.session.modified = True
+    change(delta) {
+      const next = qty + delta;
+      if (next < MIN_QTY || next > MAX_QTY) return;
+      qty = next;
+      this.render();
 
+      /* Анимация значения */
+      this.el.animate(
+        [{ transform: `translateY(${delta > 0 ? '-6px' : '6px'})`, opacity: '.4' },
+         { transform: 'none', opacity: '1' }],
+        { duration: 180, easing: 'ease' }
+      );
+    },
 
-def _cart_total(cart: dict) -> Decimal:
-    total = Decimal("0")
-    for item in cart.values():
-        total += Decimal(str(item["price"])) * item["qty"]
-    return total
+    render() {
+      if (!this.el) return;
 
+      /* Счётчик */
+      this.el.textContent = qty;
 
-def _cart_qty(cart: dict) -> int:
-    return sum(item["qty"] for item in cart.values())
+      /* Кнопки */
+      if (this.decBtn) this.decBtn.disabled = qty <= MIN_QTY;
+      if (this.incBtn) this.incBtn.disabled = qty >= MAX_QTY;
 
+      /* Subtotal */
+      if (this.subtotal && PD.price) {
+        const total = (PD.price * qty).toLocaleString('ru-RU');
+        this.subtotal.textContent = `${total} сом`;
 
-# ─────────────────────────────────────────────────────────────────
-# MAIN PAGE — index
-# ─────────────────────────────────────────────────────────────────
-
-class IndexView(View):
-    """
-    Главная страница:
-    - отдаёт все активные категории и товары в контекст
-    - шаблон: store/index.html (твой index.html → переименуй)
-    """
-    template_name = "store/index.html"
-
-    def get(self, request):
-        categories = Category.objects.all()
-        products   = Product.objects.filter(is_active=True).select_related("category")
-
-        cart     = _get_cart(request)
-        context  = {
-            "categories":  categories,
-            "products":    products,
-            "cart_qty":    _cart_qty(cart),
-            "currency":    CURRENCY,
+        /* Подсветка при изменении */
+        const box = $('pdSubtotal');
+        if (box) {
+          box.classList.add('highlight');
+          clearTimeout(this._hlTimer);
+          this._hlTimer = setTimeout(() => box.classList.remove('highlight'), 600);
         }
-        return render(request, self.template_name, context)
+      }
+    },
+  };
 
+  /* ================================================================
+     AddToCart — кнопки «В корзину»
+     ================================================================ */
+  const AddToCart = {
+    init() {
+      const mainBtn   = $('addToCartBtn');
+      const mobileBtn = $('mobileBuyBtn');
 
-# ─────────────────────────────────────────────────────────────────
-# CATALOG — список товаров (отдельная страница, если нужна)
-# ─────────────────────────────────────────────────────────────────
+      if (mainBtn)   mainBtn.addEventListener('click',   () => this.add(mainBtn));
+      if (mobileBtn) mobileBtn.addEventListener('click', () => this.add(mobileBtn));
+    },
 
-class CatalogView(ListView):
-    model               = Product
-    template_name       = "store/catalog.html"
-    context_object_name = "products"
-    paginate_by         = 16
+    add(btn) {
+      if (!window.Cart) {
+        console.warn('[product_detail] Cart не найден. Убедитесь, что script.js подключён.');
+        return;
+      }
 
-    def get_queryset(self):
-        qs       = Product.objects.filter(is_active=True).select_related("category")
-        category = self.request.GET.get("category", "all")
-        if category and category != "all":
-            qs = qs.filter(category__slug=category)
-        return qs
+      const lang    = window.State?.lang || 'ru';
+      const nameKey = `name${lang[0].toUpperCase()}${lang.slice(1)}`;
+      const name    = btn.dataset[nameKey] || btn.dataset.nameRu || PD.nameRu;
 
-    def get_context_data(self, **kwargs):
-        ctx = super().get_context_data(**kwargs)
-        ctx["categories"]       = Category.objects.all()
-        ctx["active_category"]  = self.request.GET.get("category", "all")
-        ctx["cart_qty"]         = _cart_qty(_get_cart(self.request))
-        ctx["currency"]         = CURRENCY
-        return ctx
+      /* Добавляем qty раз (или сразу qty штук) */
+      window.Cart.add({
+        id:      String(PD.id),
+        name,
+        name_ru: PD.nameRu || btn.dataset.nameRu,
+        name_ky: PD.nameKy || btn.dataset.nameKy,
+        price:   Number(btn.dataset.price) || PD.price,
+        emoji:   btn.dataset.emoji || PD.emoji || '📦',
+        qty:     qty - 1, /* Cart.add уже прибавляет 1, поэтому qty-1 доп. */
+      });
 
+      /* Если qty > 1, добавляем разницу вручную */
+      if (qty > 1) {
+        const item = window.State?.cart?.find(i => i.id === String(PD.id));
+        if (item) {
+          item.qty = item.qty + qty - 1; /* Корректируем */
+          window.Cart._sync();
+        }
+      }
 
-# ─────────────────────────────────────────────────────────────────
-# PRODUCT DETAIL
-# ─────────────────────────────────────────────────────────────────
+      /* Визуальная обратная связь */
+      this._feedback(btn);
+    },
 
-class ProductDetailView(DetailView):
-    model               = Product
-    template_name       = "store/product_detail.html"
-    context_object_name = "product"
+    _feedback(btn) {
+      const label = btn.querySelector('[data-i18n="addToCart"], span');
+      const orig  = label?.textContent;
 
-    def get_queryset(self):
-        return Product.objects.filter(is_active=True).select_related("category")
+      btn.classList.add('added');
+      btn.disabled = true;
+      if (label) label.textContent = '✓ Добавлено';
 
-    def get_context_data(self, **kwargs):
-        ctx = super().get_context_data(**kwargs)
-        ctx["currency"] = CURRENCY
-        ctx["cart_qty"] = _cart_qty(_get_cart(self.request))
+      setTimeout(() => {
+        btn.classList.remove('added');
+        btn.disabled = false;
+        if (label && orig) label.textContent = orig;
+      }, 1400);
+    },
+  };
 
-        # Похожие товары: та же категория, исключаем текущий, макс 4
-        ctx["related_products"] = (
-            Product.objects
-            .filter(is_active=True, category=self.object.category)
-            .exclude(pk=self.object.pk)
-            .order_by("order", "id")[:4]
-        )
+  /* ================================================================
+     MobileBuyBar — появляется при скролле мимо кнопки покупки
+     ================================================================ */
+  const MobileBuyBar = {
+    bar:       null,
+    sentinel:  null,
 
-        # Категории для футера
-        ctx["categories"] = Category.objects.all()
+    init() {
+      this.bar = $('mobileBuyBar');
+      if (!this.bar) return;
 
-        return ctx
+      /* Следим за кнопкой покупки как сентинелом */
+      this.sentinel = $('addToCartBtn');
+      if (!this.sentinel || !('IntersectionObserver' in window)) {
+        /* Fallback: всегда показываем на мобиле */
+        this.bar.classList.add('visible');
+        return;
+      }
 
+      const io = new IntersectionObserver(entries => {
+        /* Показываем bar когда кнопка НЕ видна */
+        this.bar.classList.toggle('visible', !entries[0].isIntersecting);
+      }, { threshold: 0, rootMargin: '-80px 0px 0px 0px' });
 
-# ─────────────────────────────────────────────────────────────────
-# CART API — JSON endpoints (вызываются из script.js)
-# ─────────────────────────────────────────────────────────────────
+      io.observe(this.sentinel);
+    },
+  };
 
-class CartAddView(View):
-    """
-    POST /cart/add/
-    Body JSON: { "product_id": 1, "qty": 1 }
-    Response:  { "ok": true, "cart_qty": 3, "total": "450 сом" }
-    """
+  /* ================================================================
+     RelatedCards — кнопки «+» у похожих товаров
+     ================================================================ */
+  const RelatedCards = {
+    init() {
+      $$('.btn-add').forEach(btn => {
+        /* Клон, чтобы убрать старые листенеры */
+        btn.addEventListener('click', e => {
+          e.preventDefault();
+          if (!window.Cart) return;
 
-    def post(self, request):
-        import json
-        try:
-            data       = json.loads(request.body)
-            product_id = str(data.get("product_id"))
-            qty        = int(data.get("qty", 1))
-        except (ValueError, KeyError, json.JSONDecodeError):
-            return JsonResponse({"ok": False, "error": "Неверные данные"}, status=400)
+          const lang    = window.State?.lang || 'ru';
+          const nameKey = `name${lang[0].toUpperCase()}${lang.slice(1)}`;
 
-        product = get_object_or_404(Product, pk=product_id, is_active=True)
-        cart    = _get_cart(request)
+          window.Cart.add({
+            id:      btn.dataset.id,
+            name:    btn.dataset[nameKey] ?? btn.dataset.nameRu,
+            name_ru: btn.dataset.nameRu,
+            name_ky: btn.dataset.nameKy ?? btn.dataset.nameRu,
+            price:   Number(btn.dataset.price) || 0,
+            emoji:   btn.dataset.emoji || '📦',
+          });
 
-        if product_id in cart:
-            cart[product_id]["qty"] += qty
-        else:
-            cart[product_id] = {
-                "name_ru": product.name_ru,
-                "name_ky": product.name_ky,
-                "price":   str(product.price),
-                "emoji":   product.emoji,
-                "qty":     qty,
-            }
+          /* Feedback */
+          const orig = btn.textContent;
+          btn.textContent = '✓';
+          btn.classList.add('added');
+          btn.disabled = true;
+          setTimeout(() => {
+            btn.textContent = orig;
+            btn.classList.remove('added');
+            btn.disabled = false;
+          }, 420);
+        });
+      });
+    },
+  };
 
-        _save_cart(request, cart)
-        return JsonResponse({
-            "ok":       True,
-            "cart_qty": _cart_qty(cart),
-            "total":    f"{_cart_total(cart):,.0f} {CURRENCY}".replace(",", " "),
-        })
+  /* ================================================================
+     Thumb — переключение миниатюр
+     ================================================================ */
+  const Thumb = {
+    init() {
+      const thumbs  = $$('.pd-thumb');
+      const mainImg = document.querySelector('.pd-gallery__photo');
+      if (!thumbs.length || !mainImg) return;
 
+      thumbs.forEach(thumb => {
+        thumb.addEventListener('click', () => {
+          thumbs.forEach(t => { t.classList.remove('pd-thumb--active'); t.removeAttribute('aria-current'); });
+          thumb.classList.add('pd-thumb--active');
+          thumb.setAttribute('aria-current', 'true');
 
-class CartRemoveView(View):
-    """
-    POST /cart/remove/
-    Body JSON: { "product_id": 1 }
-    """
+          const src = thumb.querySelector('img')?.src;
+          if (src && mainImg.src !== src) {
+            mainImg.style.opacity = '0';
+            mainImg.style.transform = 'scale(.97)';
+            setTimeout(() => {
+              mainImg.src = src;
+              mainImg.style.transition = 'opacity .3s ease, transform .3s ease';
+              mainImg.style.opacity = '1';
+              mainImg.style.transform = 'none';
+            }, 180);
+          }
+        });
+      });
+    },
+  };
 
-    def post(self, request):
-        import json
-        try:
-            data       = json.loads(request.body)
-            product_id = str(data.get("product_id"))
-        except (ValueError, json.JSONDecodeError):
-            return JsonResponse({"ok": False, "error": "Неверные данные"}, status=400)
+  /* ================================================================
+     LangSync — при смене языка обновляем data-lang-* на странице
+     (script.js уже делает это, но product_detail может быть загружен
+      позже, поэтому слушаем кастомное событие)
+     ================================================================ */
+  const LangSync = {
+    init() {
+      /* Уже обрабатывается script.js через [data-lang-ru] сканирование.
+         Здесь просто триггерим обновление если язык уже выбран. */
+      const activeLang = document.querySelector('.lang-btn.active')?.dataset.lang;
+      if (activeLang && window.Lang) {
+        /* Не перезапускаем полностью, просто синхронизируем data-lang-* */
+        $$('[data-lang-ru]').forEach(el => {
+          const key = `lang${activeLang[0].toUpperCase()}${activeLang.slice(1)}`;
+          el.textContent = el.dataset[key] || el.dataset.langRu || '';
+        });
+      }
+    },
+  };
 
-        cart = _get_cart(request)
-        cart.pop(product_id, None)
-        _save_cart(request, cart)
+  /* ================================================================
+     REVEAL — появление блоков при скролле
+     ================================================================ */
+  function initReveal() {
+    const els = $$('.pd-perk, .pd-price-block, .pd-gallery, .related-grid .product-card');
+    if (!('IntersectionObserver' in window)) return;
 
-        return JsonResponse({
-            "ok":       True,
-            "cart_qty": _cart_qty(cart),
-            "total":    f"{_cart_total(cart):,.0f} {CURRENCY}".replace(",", " "),
-        })
+    els.forEach(el => {
+      el.style.opacity   = '0';
+      el.style.transform = 'translateY(20px)';
+      el.style.transition = 'opacity .5s ease, transform .5s ease';
+    });
 
+    const io = new IntersectionObserver(entries => {
+      entries.forEach((e, i) => {
+        if (!e.isIntersecting) return;
+        setTimeout(() => {
+          e.target.style.opacity   = '1';
+          e.target.style.transform = 'none';
+        }, i * 70);
+        io.unobserve(e.target);
+      });
+    }, { threshold: 0.08 });
 
-class CartUpdateView(View):
-    """
-    POST /cart/update/
-    Body JSON: { "product_id": 1, "qty": 3 }
-    qty=0 → удаляет товар
-    """
+    els.forEach(el => io.observe(el));
+  }
 
-    def post(self, request):
-        import json
-        try:
-            data       = json.loads(request.body)
-            product_id = str(data.get("product_id"))
-            qty        = int(data.get("qty", 1))
-        except (ValueError, json.JSONDecodeError):
-            return JsonResponse({"ok": False, "error": "Неверные данные"}, status=400)
+  /* ================================================================
+     INIT
+     ================================================================ */
+  function init() {
+    QtyControl.init();
+    AddToCart.init();
+    MobileBuyBar.init();
+    RelatedCards.init();
+    Thumb.init();
+    LangSync.init();
+    initReveal();
+  }
 
-        cart = _get_cart(request)
+  /* script.js слушает DOMContentLoaded и инициализирует Cart/Lang.
+     product_detail.js запускается после (defer или внизу body),
+     поэтому DOM гарантированно готов. */
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
 
-        if qty <= 0:
-            cart.pop(product_id, None)
-        elif product_id in cart:
-            cart[product_id]["qty"] = qty
-        else:
-            return JsonResponse({"ok": False, "error": "Товар не в корзине"}, status=404)
-
-        _save_cart(request, cart)
-        return JsonResponse({
-            "ok":       True,
-            "cart_qty": _cart_qty(cart),
-            "total":    f"{_cart_total(cart):,.0f} {CURRENCY}".replace(",", " "),
-        })
-
-
-class CartDetailView(View):
-    """
-    GET /cart/
-    Возвращает текущее состояние корзины в JSON.
-    Используй для синхронизации при загрузке страницы.
-    """
-
-    def get(self, request):
-        cart  = _get_cart(request)
-        items = []
-        for pid, item in cart.items():
-            items.append({
-                "product_id": pid,
-                **item,
-                "subtotal": str(Decimal(str(item["price"])) * item["qty"]),
-            })
-        return JsonResponse({
-            "items":    items,
-            "cart_qty": _cart_qty(cart),
-            "total":    f"{_cart_total(cart):,.0f} {CURRENCY}".replace(",", " "),
-        })
-
-
-class CartClearView(View):
-    """
-    POST /cart/clear/
-    Очищает корзину.
-    """
-
-    def post(self, request):
-        _save_cart(request, {})
-        return JsonResponse({"ok": True, "cart_qty": 0, "total": f"0 {CURRENCY}"})
-
-
-# ─────────────────────────────────────────────────────────────────
-# CHECKOUT — оформление заказа (сохраняет snapshot в БД)
-# ─────────────────────────────────────────────────────────────────
-
-class CheckoutView(View):
-    """
-    POST /checkout/
-    Сохраняет корзину как CartSession и очищает сессию.
-    Расширяй: добавь форму контактов, оплату, email-уведомление.
-    """
-
-    def post(self, request):
-        cart = _get_cart(request)
-        if not cart:
-            return JsonResponse({"ok": False, "error": "Корзина пуста"}, status=400)
-
-        total = _cart_total(cart)
-
-        CartSession.objects.create(
-            session_key = request.session.session_key or "anon",
-            items_json  = cart,
-            total       = total,
-        )
-
-        _save_cart(request, {})
-
-        return JsonResponse({
-            "ok":     True,
-            "total":  f"{total:,.0f} {CURRENCY}".replace(",", " "),
-            "message": "Заказ оформлен! Мы свяжемся с вами.",
-        })
+})();

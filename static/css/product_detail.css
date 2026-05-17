@@ -1,13 +1,14 @@
 /* ================================================================
-   product_detail.css
-   Расширяет style.css — переменные и базовые стили наследуются.
+   КанцПро — product_detail.css  |  Luxury Dark Edition 2025
+   Дополнение к style.css: стили только для страницы товара.
+   Подключать ПОСЛЕ style.css.
    ================================================================ */
 
 /* ── BREADCRUMB ─────────────────────────────────────────────────── */
 .breadcrumb-bar {
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
-  padding: 12px 0;
+  background: var(--deep);
+  border-bottom: 1px solid var(--rim);
+  padding: 14px 0;
 }
 .breadcrumb {
   display: flex;
@@ -16,38 +17,56 @@
   flex-wrap: wrap;
 }
 .breadcrumb a {
-  font-size: 0.82rem;
-  color: var(--ink-light);
-  font-weight: 500;
+  font-size: .8rem;
+  color: var(--text-faint);
+  font-weight: 400;
   transition: color var(--tr);
+  white-space: nowrap;
 }
-.breadcrumb a:hover { color: var(--primary); }
+.breadcrumb a:hover { color: var(--gold); }
 .breadcrumb__sep {
   display: flex;
   align-items: center;
-  color: var(--ink-ghost);
+  color: var(--text-faint);
+  opacity: .4;
+  flex-shrink: 0;
 }
 .breadcrumb__sep svg { width: 14px; height: 14px; }
 .breadcrumb__current {
-  font-size: 0.82rem;
-  color: var(--ink);
-  font-weight: 600;
-  /* Обрезаем длинные названия */
-  max-width: 260px;
+  font-size: .8rem;
+  color: var(--cream-dim);
+  font-weight: 500;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  max-width: 260px;
 }
 
-/* ── MAIN PRODUCT SECTION ───────────────────────────────────────── */
+/* ── MAIN PRODUCT LAYOUT ────────────────────────────────────────── */
 .pd-main {
-  padding: 48px 0 72px;
+  padding: 56px 0 80px;
+  background: var(--void);
+  position: relative;
+  min-height: 60vh;
 }
+/* Ambient glow */
+.pd-main::before {
+  content: '';
+  position: absolute;
+  width: 500px; height: 500px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(201,168,76,.08) 0%, transparent 70%);
+  top: -60px; right: -80px;
+  pointer-events: none;
+  filter: blur(80px);
+}
+
 .pd-inner {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 64px;
   align-items: start;
+  position: relative; z-index: 1;
 }
 
 /* ── GALLERY ────────────────────────────────────────────────────── */
@@ -61,218 +80,240 @@
 
 .pd-gallery__main {
   position: relative;
-  width: 100%;
   aspect-ratio: 1 / 1;
-  border-radius: var(--r-lg);
+  border-radius: var(--r-xl);
+  border: 1px solid var(--rim);
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  border: 1px solid var(--border);
+  transition: border-color var(--tr);
 }
+.pd-gallery__main:hover { border-color: rgba(201,168,76,.2); }
 
-/* Цветовые темы — наследуются из style.css */
-.pd-gallery__main--blue   { background: var(--img-blue); }
-.pd-gallery__main--yellow { background: var(--img-yellow); }
-.pd-gallery__main--green  { background: var(--img-green); }
-.pd-gallery__main--purple { background: var(--img-purple); }
-.pd-gallery__main--rose   { background: var(--img-rose); }
-.pd-gallery__main--slate  { background: var(--img-slate); }
+/* Цветовые темы (совпадают с product-card в style.css) */
+.pd-gallery__main--blue   { background: linear-gradient(135deg,#0d1d38,#172d50); }
+.pd-gallery__main--yellow { background: linear-gradient(135deg,#1e1800,#2d2200); }
+.pd-gallery__main--green  { background: linear-gradient(135deg,#071a10,#0d2819); }
+.pd-gallery__main--purple { background: linear-gradient(135deg,#1a1030,#251740); }
+.pd-gallery__main--rose   { background: linear-gradient(135deg,#28101a,#381525); }
+.pd-gallery__main--slate  { background: linear-gradient(135deg,#101520,#181f2e); }
 
-.pd-gallery__emoji {
-  font-size: 10rem;
-  line-height: 1;
-  user-select: none;
-  animation: pdFloat 4s ease-in-out infinite;
-}
 .pd-gallery__photo {
   width: 100%;
   height: 100%;
-  object-fit: contain;
-  padding: 32px;
+  object-fit: cover;
+  transition: transform .5s var(--ease);
+}
+.pd-gallery__main:hover .pd-gallery__photo { transform: scale(1.04); }
+
+.pd-gallery__emoji {
+  font-size: 8rem;
+  line-height: 1;
+  filter: drop-shadow(0 12px 32px rgba(0,0,0,.5));
+  user-select: none;
+  transition: transform .5s var(--ease);
+}
+.pd-gallery__main:hover .pd-gallery__emoji { transform: scale(1.06) rotate(-2deg); }
+
+/* Badge в галерее */
+.pd-gallery__main .badge {
+  position: absolute;
+  top: 16px; left: 16px;
+  z-index: 2;
 }
 
 /* Миниатюры */
 .pd-gallery__thumbs {
   display: flex;
-  gap: 10px;
+  gap: 8px;
   flex-wrap: wrap;
 }
 .pd-thumb {
-  width: 72px;
-  height: 72px;
-  border-radius: var(--r-sm);
-  border: 2px solid var(--border);
+  width: 72px; height: 72px;
+  border-radius: var(--r-md);
   overflow: hidden;
-  padding: 0;
-  background: var(--bg);
+  border: 1.5px solid var(--rim);
   cursor: pointer;
-  transition: border-color var(--tr);
+  transition: border-color var(--tr), transform var(--tr);
+  background: var(--panel);
+  padding: 0;
+  flex-shrink: 0;
 }
-.pd-thumb img { width: 100%; height: 100%; object-fit: cover; }
-.pd-thumb--active,
-.pd-thumb:hover { border-color: var(--primary); }
+.pd-thumb img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.pd-thumb:hover { border-color: rgba(201,168,76,.4); transform: scale(1.05); }
+.pd-thumb--active { border-color: var(--gold); box-shadow: 0 0 0 2px rgba(201,168,76,.2); }
 
-/* ── INFO PANEL ─────────────────────────────────────────────────── */
+/* ── PRODUCT INFO ───────────────────────────────────────────────── */
 .pd-info {
   display: flex;
   flex-direction: column;
-  gap: 0;
+  gap: 20px;
+  padding-top: 4px;
 }
 
-/* Топ-строка: категория + бейдж */
 .pd-info__top {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: 12px;
+  flex-wrap: wrap;
 }
 .pd-category {
-  font-size: 0.72rem;
-  font-weight: 700;
+  font-size: .7rem;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: .1em;
-  color: var(--primary);
+  letter-spacing: .12em;
+  color: var(--gold);
 }
+
+/* Badge inline (рядом с категорией) */
 .badge--inline {
   position: static;
-  font-size: 0.68rem;
+  font-size: .65rem;
 }
 
-/* Заголовок */
 .pd-title {
   font-family: var(--ff-serif);
-  font-size: clamp(1.6rem, 3vw, 2.4rem);
-  line-height: 1.2;
-  color: var(--ink);
-  margin-bottom: 16px;
+  font-size: clamp(1.8rem, 3vw, 2.8rem);
+  font-weight: 300;
+  line-height: 1.15;
+  color: var(--cream);
+  letter-spacing: -.01em;
 }
 
-/* Описание */
 .pd-desc {
-  font-size: 0.95rem;
-  color: var(--ink-light);
-  line-height: 1.75;
-  margin-bottom: 0;
+  font-size: .95rem;
+  color: var(--text-mid);
+  line-height: 1.82;
+  font-weight: 300;
 }
 
-/* Разделитель */
 .pd-divider {
-  width: 100%;
   height: 1px;
-  background: var(--border);
-  margin: 24px 0;
+  background: var(--rim);
+  margin: 4px 0;
 }
 
-/* Блок цены */
-.pd-price-block { margin-bottom: 20px; }
+/* ── PRICE BLOCK ────────────────────────────────────────────────── */
+.pd-price-block {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
 .pd-price {
   display: flex;
   align-items: baseline;
   gap: 6px;
-  margin-bottom: 6px;
 }
 .pd-price__amount {
   font-family: var(--ff-serif);
-  font-size: 2.4rem;
-  color: var(--ink);
+  font-size: 2.6rem;
+  font-weight: 300;
+  color: var(--gold);
   line-height: 1;
+  letter-spacing: -.02em;
 }
 .pd-price__cur {
-  font-size: 1rem;
-  color: var(--ink-light);
-  font-weight: 500;
+  font-size: .9rem;
+  color: var(--text-faint);
+  font-weight: 300;
 }
 .pd-price__note {
-  font-size: 0.78rem;
-  color: var(--ink-ghost);
+  font-size: .77rem;
+  color: var(--text-faint);
+  font-weight: 300;
   line-height: 1.5;
 }
 
-/* Покупка: qty + кнопка */
+/* ── PURCHASE ROW (кол-во + кнопка) ────────────────────────────── */
 .pd-purchase {
   display: flex;
-  gap: 12px;
   align-items: center;
-  margin-bottom: 14px;
+  gap: 14px;
   flex-wrap: wrap;
 }
 
-/* Qty control */
+/* Счётчик количества */
 .pd-qty {
   display: flex;
   align-items: center;
-  gap: 0;
-  border: 1.5px solid var(--border);
-  border-radius: var(--r-xl);
+  border: 1px solid var(--rim);
+  border-radius: var(--r-pill);
   overflow: hidden;
-  background: var(--surface);
+  background: var(--panel);
   flex-shrink: 0;
 }
 .pd-qty__btn {
-  width: 42px;
-  height: 44px;
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: var(--ink-mid);
+  width: 44px; height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background var(--tr), color var(--tr);
+  font-size: 1.2rem;
+  font-weight: 300;
+  color: var(--text-mid);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: color var(--tr), background var(--tr);
   line-height: 1;
 }
-.pd-qty__btn:hover {
-  background: var(--ink);
-  color: #fff;
-}
+.pd-qty__btn:hover { color: var(--gold); background: rgba(201,168,76,.06); }
+.pd-qty__btn:active { transform: scale(.9); }
 .pd-qty__val {
   min-width: 44px;
   text-align: center;
   font-size: 1rem;
-  font-weight: 700;
-  color: var(--ink);
-  border-inline: 1.5px solid var(--border);
+  font-weight: 600;
+  color: var(--cream);
+  border-left: 1px solid var(--rim);
+  border-right: 1px solid var(--rim);
   padding: 0 4px;
-  height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  line-height: 48px;
+  height: 48px;
+  user-select: none;
 }
 
-/* Кнопка купить */
+/* Кнопка "В корзину" */
 .pd-buy-btn {
   flex: 1;
-  min-width: 180px;
-  gap: 10px;
-  padding: 13px 28px;
-  font-size: 0.95rem;
+  min-width: 160px;
+  height: 48px;
+  font-size: .9rem;
+  gap: 8px;
 }
-.pd-buy-btn svg { width: 20px; height: 20px; flex-shrink: 0; }
 .pd-buy-btn.added {
-  background: var(--badge-new);
-  box-shadow: 0 2px 12px rgba(13,148,136,.3);
+  background: var(--teal);
+  border-color: var(--teal);
+  box-shadow: 0 4px 20px rgba(45,212,191,.3);
 }
 
-/* Итог */
+/* ── SUBTOTAL ───────────────────────────────────────────────────── */
 .pd-subtotal {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 16px;
-  background: var(--bg);
+  padding: 14px 18px;
+  background: var(--panel);
+  border: 1px solid var(--rim);
   border-radius: var(--r-md);
-  border: 1px solid var(--border);
-  font-size: 0.875rem;
-  color: var(--ink-light);
-  margin-bottom: 0;
+  font-size: .88rem;
+  color: var(--text-faint);
+  transition: border-color var(--tr);
 }
 .pd-subtotal strong {
   font-family: var(--ff-serif);
-  font-size: 1.1rem;
-  color: var(--ink);
+  font-size: 1.2rem;
+  font-weight: 400;
+  color: var(--gold);
+  letter-spacing: -.01em;
 }
+.pd-subtotal.highlight { border-color: rgba(201,168,76,.3); }
 
-/* Преимущества */
+/* ── PERKS ──────────────────────────────────────────────────────── */
 .pd-perks {
   display: flex;
   flex-direction: column;
@@ -281,11 +322,10 @@
 .pd-perk {
   display: flex;
   align-items: flex-start;
-  gap: 12px;
+  gap: 14px;
 }
 .pd-perk__icon {
-  width: 36px;
-  height: 36px;
+  width: 38px; height: 38px;
   border-radius: var(--r-sm);
   display: flex;
   align-items: center;
@@ -293,9 +333,13 @@
   flex-shrink: 0;
 }
 .pd-perk__icon svg { width: 18px; height: 18px; }
-.pd-perk__icon--green { background: #DCFCE7; color: #16A34A; }
-.pd-perk__icon--blue  { background: #DBEAFE; color: #2563EB; }
-.pd-perk__icon--amber { background: #FEF3C7; color: #D97706; }
+
+.pd-perk__icon--green  { background: rgba(45,212,191,.1);  border: 1px solid rgba(45,212,191,.2);  }
+.pd-perk__icon--green  svg { color: var(--teal); }
+.pd-perk__icon--blue   { background: rgba(96,165,250,.1);  border: 1px solid rgba(96,165,250,.2);  }
+.pd-perk__icon--blue   svg { color: #60a5fa; }
+.pd-perk__icon--amber  { background: rgba(201,168,76,.1);  border: 1px solid rgba(201,168,76,.2);  }
+.pd-perk__icon--amber  svg { color: var(--gold); }
 
 .pd-perk > div {
   display: flex;
@@ -303,183 +347,133 @@
   gap: 2px;
 }
 .pd-perk strong {
-  font-size: 0.875rem;
+  font-size: .85rem;
   font-weight: 600;
-  color: var(--ink);
+  color: var(--cream);
+  line-height: 1.3;
 }
 .pd-perk span {
-  font-size: 0.8rem;
-  color: var(--ink-light);
+  font-size: .78rem;
+  color: var(--text-faint);
+  font-weight: 300;
 }
 
-/* Артикул */
+/* ── SKU ────────────────────────────────────────────────────────── */
 .pd-sku {
-  font-size: 0.8rem;
-  color: var(--ink-ghost);
+  font-size: .77rem;
+  color: var(--text-faint);
+  font-weight: 300;
   display: flex;
-  gap: 6px;
   align-items: center;
+  gap: 6px;
 }
 .pd-sku code {
   font-family: 'Courier New', monospace;
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: var(--r-sm);
+  font-size: .77rem;
+  color: var(--text-mid);
+  background: var(--panel);
+  border: 1px solid var(--rim);
   padding: 2px 8px;
-  font-size: 0.78rem;
-  color: var(--ink-mid);
+  border-radius: var(--r-xs);
 }
 
 /* ── RELATED PRODUCTS ───────────────────────────────────────────── */
 .related {
-  padding: 0 0 80px;
-  border-top: 1px solid var(--border);
-  padding-top: 64px;
+  padding: 80px 0 96px;
+  background: var(--deep);
+  border-top: 1px solid var(--rim);
 }
 .related-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
-}
-/* Ссылка поверх изображения карточки */
-.product-card__link { display: block; }
-.product-card__name a {
-  color: inherit;
-  transition: color var(--tr);
-}
-.product-card__name a:hover { color: var(--primary); }
-
-/* Фото в карточках related */
-.product-card__photo {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  padding: 16px;
+  gap: 18px;
 }
 
-/* ── MOBILE STICKY BUY BAR ──────────────────────────────────────── */
+/* ── MOBILE BUY BAR ─────────────────────────────────────────────── */
 .mobile-buy-bar {
-  display: none;   /* показывается только на мобайле */
+  display: none;
   position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  bottom: 0; left: 0; right: 0;
   z-index: 800;
-  background: var(--surface);
-  border-top: 1px solid var(--border);
-  padding: 12px 20px;
-  padding-bottom: calc(12px + env(safe-area-inset-bottom));
-  flex-direction: row;
+  background: rgba(11,14,26,.95);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-top: 1px solid var(--rim);
+  padding: 12px 16px;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  box-shadow: 0 -4px 24px rgba(15,17,23,.1);
+  transform: translateY(100%);
+  transition: transform var(--tr-slow);
 }
+.mobile-buy-bar.visible { transform: translateY(0); }
 .mobile-buy-bar__price {
   display: flex;
   align-items: baseline;
-  gap: 4px;
+  gap: 5px;
 }
 .mobile-buy-bar__amount {
   font-family: var(--ff-serif);
   font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--ink);
+  font-weight: 300;
+  color: var(--gold);
+  letter-spacing: -.01em;
 }
 .mobile-buy-bar__cur {
-  font-size: 0.82rem;
-  color: var(--ink-light);
+  font-size: .8rem;
+  color: var(--text-faint);
+  font-weight: 300;
 }
 .mobile-buy-bar__btn {
   flex: 1;
   max-width: 220px;
-  padding: 13px 20px;
-  gap: 8px;
+  height: 46px;
+  font-size: .88rem;
 }
-.mobile-buy-bar__btn svg { width: 18px; height: 18px; }
 
-/* ── ANIMATIONS ─────────────────────────────────────────────────── */
-@keyframes pdFloat {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  33%       { transform: translateY(-12px) rotate(2deg); }
-  66%       { transform: translateY(-6px) rotate(-2deg); }
+/* Safe area (iPhone) */
+@supports (padding: max(0px)) {
+  .mobile-buy-bar {
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
+  }
 }
 
 /* ── RESPONSIVE ─────────────────────────────────────────────────── */
-
-/* Laptop / Small desktop */
-@media (max-width: 1200px) {
-  .pd-inner      { gap: 48px; }
-  .related-grid  { grid-template-columns: repeat(3, 1fr); }
+@media (max-width: 1100px) {
+  .related-grid { grid-template-columns: repeat(3, 1fr); }
 }
 
-/* Tablet landscape */
-@media (max-width: 1024px) {
-  .pd-gallery__emoji { font-size: 8rem; }
-  .related-grid  { grid-template-columns: repeat(3, 1fr); }
-}
-
-/* Tablet portrait */
-@media (max-width: 768px) {
-  /* Переключаем в одну колонку */
+@media (max-width: 900px) {
   .pd-inner {
     grid-template-columns: 1fr;
-    gap: 32px;
+    gap: 40px;
   }
-
-  /* Галерея — не sticky на телефоне */
   .pd-gallery {
     position: static;
+    max-width: 520px;
+    margin: 0 auto;
+    width: 100%;
   }
+  .related-grid { grid-template-columns: repeat(2, 1fr); }
+}
 
-  /* Уменьшаем соотношение сторон галереи */
-  .pd-gallery__main {
-    aspect-ratio: 4 / 3;
-    border-radius: var(--r-md);
-  }
-  .pd-gallery__emoji { font-size: 6rem; }
-
-  /* Показываем мобильный бар */
+@media (max-width: 768px) {
+  .pd-main { padding: 40px 0 100px; } /* отступ для mobile bar */
   .mobile-buy-bar { display: flex; }
-
-  /* Прячем кнопку на десктопе, добавляем отступ снизу */
-  .pd-purchase { display: none; }
-  .pd-subtotal { display: none; }
-  .pd-main     { padding-bottom: calc(72px + env(safe-area-inset-bottom) + 16px); }
-
-  /* Related */
-  .related-grid  { grid-template-columns: repeat(2, 1fr); gap: 14px; }
-
-  /* Breadcrumb */
-  .breadcrumb__current { max-width: 160px; }
-
-  /* Title */
-  .pd-title { font-size: 1.5rem; }
+  .pd-purchase { display: none; }    /* Скрываем десктоп-кнопку */
+  .pd-subtotal  { display: none; }
+  .related { padding: 56px 0 72px; }
 }
 
-/* Mobile */
+@media (max-width: 600px) {
+  .pd-title { font-size: 1.8rem; }
+  .pd-price__amount { font-size: 2rem; }
+  .related-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .breadcrumb__current { max-width: 150px; }
+}
+
 @media (max-width: 480px) {
-  .pd-main     { padding: 24px 0 0; }
-  .pd-title    { font-size: 1.35rem; }
-  .pd-price__amount { font-size: 1.9rem; }
-  .pd-gallery__main { aspect-ratio: 1 / 1; }
-  .pd-gallery__emoji { font-size: 5rem; }
-
-  .related-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-  .related      { padding-top: 40px; padding-bottom: 60px; }
-
-  .mobile-buy-bar__btn { font-size: 0.85rem; padding: 12px 16px; }
-
-  /* Breadcrumb — прячем средние звенья на маленьких экранах */
-  .breadcrumb a:not(:first-child):not(:last-child),
-  .breadcrumb__sep:not(:last-of-type) {
-    display: none;
-  }
-}
-
-/* Очень маленькие (≤ 360px) */
-@media (max-width: 360px) {
-  .pd-perks { gap: 12px; }
-  .pd-perk__icon { width: 30px; height: 30px; }
-  .related-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .pd-gallery__emoji { font-size: 5.5rem; }
+  .related-grid { gap: 10px; }
+  .related-grid .product-card__desc { display: none; }
 }
